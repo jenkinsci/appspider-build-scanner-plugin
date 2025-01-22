@@ -8,7 +8,6 @@ import com.rapid7.appspider.datatransferobjects.ClientIdNamePair;
 import com.rapid7.appspider.datatransferobjects.ScanResult;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import hudson.model.Api;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
