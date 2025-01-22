@@ -5,7 +5,6 @@
 package com.rapid7.appspider.models;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Storage class containing all the information need to authenticate
