@@ -22,7 +22,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.verb.POST;
 
 import java.io.IOException;
@@ -369,7 +369,7 @@ public class PostBuildScan extends Notifier {
         }
 
         @Override
-        public boolean configure(StaplerRequest req, net.sf.json.JSONObject formData) throws FormException {
+        public boolean configure(StaplerRequest2 req, net.sf.json.JSONObject formData) throws FormException {
             req.bindJSON(this, formData);
 
             save();
