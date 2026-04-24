@@ -490,8 +490,11 @@ public class PostBuildScan extends Notifier {
 
         public FormValidation doValidateNewScanConfig(@QueryParameter("scanConfigName") final String scanConfigName,
                                                       @QueryParameter("scanConfigUrl") final String scanConfigUrl) {
+            // Permission check
+            Jenkins.get().checkPermission(Jenkins.ADMINISTER);
+            
             try {
-                final String ALPHANUMERIC_REGEX = "^[a-zA-Z0_\\-.]*$";
+                final String ALPHANUMERIC_REGEX = "^[a-zA-Z0-9\\-_\\.]*$";
                 if (!scanConfigName.matches(ALPHANUMERIC_REGEX) ||
                         scanConfigName.contains(" ") ||
                         scanConfigName.isEmpty()) {
@@ -499,13 +502,26 @@ public class PostBuildScan extends Notifier {
                             "Only alpha-numeric, '.' , '_' , and '-' are allowed");
                 }
 
-                if (UrlValidator.getInstance().isValid(scanConfigUrl)) {
-                    URL url = new URL(scanConfigUrl);
-                    URLConnection conn = url.openConnection();
-                    conn.connect();
-                } else {
+                // Validate URL format
+                if (!UrlValidator.getInstance().isValid(scanConfigUrl)) {
                     return FormValidation.error("Invalid url. Check the protocol (i.e http/https) or the port.");
                 }
+
+                URL url = new URL(scanConfigUrl);
+                String host = url.getHost().toLowerCase();
+
+                // Only allow http/https
+                String protocol = url.getProtocol().toLowerCase();
+                if (!protocol.equals("http") && !protocol.equals("https")) {
+                    return FormValidation.error("Only HTTP and HTTPS protocols are allowed");
+                }
+
+                // Connection with timeout
+                URLConnection conn = url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+                conn.connect();
+                
                 return FormValidation.ok("Valid scan configuration name and url.");
             } catch (IOException /* | MalformedURLException */ e) {
                 buildLoggerFacade().println(e.getMessage() + " from doValidateNewScanConfig");
